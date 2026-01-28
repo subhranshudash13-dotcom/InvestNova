@@ -1,15 +1,15 @@
-```javascript
+
 import dynamic from 'next/dynamic';
 import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/button';
 import { RefreshCw, TrendingUp } from 'lucide-react';
 
-const RiskGauge = dynamic(() => import('@/components/charts/RiskGauge').then(mod => mod.RiskGauge), { 
+const RiskGauge = dynamic(() => import('@/components/charts/RiskGauge').then(mod => mod.RiskGauge), {
     ssr: false,
     loading: () => <div className="h-[120px] w-full animate-pulse bg-muted/20 rounded-xl" />
 });
 
-const CandlestickChart = dynamic(() => import('@/components/charts/CandlestickChart').then(mod => mod.CandlestickChart), { 
+const CandlestickChart = dynamic(() => import('@/components/charts/CandlestickChart').then(mod => mod.CandlestickChart), {
     ssr: false,
     loading: () => <div className="h-[300px] w-full animate-pulse bg-muted/20 rounded-xl" />
 });
@@ -114,7 +114,7 @@ export default async function DashboardPage() {
                                 </div>
                                 <div className="text-right">
                                     <div className="font-medium">${stock.price}</div>
-                                    <div className={`text - xs ${ stock.change.startsWith('+') ? 'text-green-500' : 'text-red-500' } `}>
+                                    <div className={`text-xs ${stock.change.startsWith('+') ? 'text-green-500' : 'text-red-500'}`}>
                                         {stock.change}
                                     </div>
                                 </div>
