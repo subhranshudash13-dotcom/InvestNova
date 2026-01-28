@@ -1,9 +1,9 @@
+"use client";
 
 import dynamic from 'next/dynamic';
-import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/button';
-import { TrendingUp } from 'lucide-react';
 import { NewsTicker } from '@/components/features/NewsTicker';
+import { RefreshCw, TrendingUp } from 'lucide-react';
 
 const RiskGauge = dynamic(() => import('@/components/charts/RiskGauge').then(mod => mod.RiskGauge), {
     ssr: false,
@@ -15,12 +15,7 @@ const CandlestickChart = dynamic(() => import('@/components/charts/CandlestickCh
     loading: () => <div className="h-[300px] w-full animate-pulse bg-muted/20 rounded-xl" />
 });
 
-export default async function DashboardPage() {
-    const supabase = await createClient();
-    const {
-        data: { user },
-    } = await supabase.auth.getUser();
-
+export default function DashboardPage() {
     return (
         <div className="space-y-8 animate-fade-in pb-10">
             <NewsTicker />
@@ -36,6 +31,7 @@ export default async function DashboardPage() {
                     </p>
                 </div>
                 <Button variant="outline" className="gap-2 glass-panel hover:bg-primary/10 transition-colors">
+                    <RefreshCw className="w-4 h-4" />
                     Refresh Data
                 </Button>
             </div>
@@ -44,7 +40,7 @@ export default async function DashboardPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="glass-panel p-6 rounded-2xl relative overflow-hidden group hover:border-primary/50 transition-colors">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                        {/* Icon placeholder */}
+                        <TrendingUp className="w-24 h-24 text-primary" />
                     </div>
                     <h3 className="text-sm font-medium text-muted-foreground mb-2">Portfolio Value</h3>
                     <div className="text-4xl font-bold tracking-tight">$12,450.00</div>

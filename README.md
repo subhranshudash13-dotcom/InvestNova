@@ -272,6 +272,3 @@ For issues and questions:
 [⬆ Back to Top](#investnova---ai-stock--forex-trading-platform)
 
 </div>
-
-
-SUPABASE PASSWORD - J$Bx5/knkGteS_9
