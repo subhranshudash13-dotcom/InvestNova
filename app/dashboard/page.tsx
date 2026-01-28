@@ -3,6 +3,7 @@ import dynamic from 'next/dynamic';
 import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/button';
 import { RefreshCw, TrendingUp } from 'lucide-react';
+// import { NewsTicker } from '@/components/features/NewsTicker';
 
 const RiskGauge = dynamic(() => import('@/components/charts/RiskGauge').then(mod => mod.RiskGauge), {
     ssr: false,
@@ -22,7 +23,7 @@ export default async function DashboardPage() {
 
     return (
         <div className="space-y-8 animate-fade-in pb-10">
-            <NewsTicker />
+            {/* <NewsTicker /> */}
 
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
