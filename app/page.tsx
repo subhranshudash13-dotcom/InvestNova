@@ -2,6 +2,7 @@ import Hero from '@/components/landing/Hero';
 import AnimatedStats from '@/components/landing/AnimatedStats';
 import StockTicker from '@/components/landing/StockTicker';
 import { NewsTicker } from '@/components/features/NewsTicker';
+import Features from '@/components/landing/Features';
 import { Navbar } from '@/components/layout/Navbar';
 
 export default function Home() {
@@ -10,6 +11,7 @@ export default function Home() {
       <Navbar />
       <Hero />
       <NewsTicker />
+      <Features />
       <AnimatedStats />
       <StockTicker />
 

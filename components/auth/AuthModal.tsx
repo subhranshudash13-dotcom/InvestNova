@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 interface AuthModalProps {
     onClose: () => void;
@@ -15,6 +17,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
+    const router = useRouter();
 
     const supabase = createClient();
 
@@ -34,7 +37,8 @@ export default function AuthModal({ onClose }: AuthModalProps) {
                 });
 
                 if (error) throw error;
-                setMessage('Check your email to confirm your account!');
+                toast.success('Check your email to confirm your account!');
+                onClose();
             } else if (mode === 'signin') {
                 const { error } = await supabase.auth.signInWithPassword({
                     email,
@@ -42,14 +46,18 @@ export default function AuthModal({ onClose }: AuthModalProps) {
                 });
 
                 if (error) throw error;
-                window.location.href = '/dashboard';
+                toast.success('Welcome back!');
+                onClose();
+                router.push('/dashboard');
+                router.refresh();
             } else {
                 const { error } = await supabase.auth.resetPasswordForEmail(email, {
                     redirectTo: `${window.location.origin}/auth/callback`,
                 });
 
                 if (error) throw error;
-                setMessage('Password reset email sent!');
+                toast.success('Password reset email sent!');
+                onClose();
             }
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {

@@ -57,7 +57,11 @@ export default function Hero() {
                         Start Analyzing Free
                     </button>
                     <button
-                        className="px-12 py-5 rounded-full border border-border bg-background/50 backdrop-blur-md font-semibold hover:bg-muted transition-all w-full sm:w-auto"
+                        onClick={() => {
+                            const featuresSection = document.getElementById('features');
+                            featuresSection?.scrollIntoView({ behavior: 'smooth' });
+                        }}
+                        className="px-12 py-5 rounded-full border border-border bg-background/50 backdrop-blur-md font-semibold hover:bg-muted transition-all w-full sm:w-auto hover:border-primary/30"
                     >
                         View Demo
                     </button>
