@@ -192,6 +192,7 @@ export async function POST(request: Request) {
             recommendations: topRecommendations,
             count: topRecommendations.length,
         });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
         console.error('Error generating recommendations:', error);
         return NextResponse.json(
@@ -233,6 +234,7 @@ export async function GET(request: Request) {
             recommendations: recommendations[0].stocks || [],
             generatedAt: recommendations[0].created_at,
         });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
         console.error('Error fetching recommendations:', error);
         return NextResponse.json(

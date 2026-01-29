@@ -210,8 +210,8 @@ export function estimateProjectedReturn(
     timeframe: 'short' | 'medium' | 'long'
 ): number {
     // Simple projection based on RSI momentum and volatility
-    let momentumFactor = (rsi - 50) / 50; // -1 to 1
-    let timeFactor = timeframe === 'short' ? 1 : timeframe === 'medium' ? 1.5 : 2;
+    const momentumFactor = (rsi - 50) / 50; // -1 to 1
+    const timeFactor = timeframe === 'short' ? 1 : timeframe === 'medium' ? 1.5 : 2;
 
     // Expected return = momentum × volatility × time factor
     const projectedReturn = momentumFactor * (volatility / 100) * timeFactor * 100;

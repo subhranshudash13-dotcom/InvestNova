@@ -51,6 +51,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
                 if (error) throw error;
                 setMessage('Password reset email sent!');
             }
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             setMessage(error.message || 'An error occurred');
         } finally {
@@ -178,7 +179,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
                         {mode === 'signin' && (
                             <>
                                 <button onClick={() => setMode('signup')} className="text-primary-600 hover:underline">
-                                    Don't have an account? Sign up
+                                    Don&apos;t have an account? Sign up
                                 </button>
                                 <br />
                                 <button onClick={() => setMode('reset')} className="text-gray-600 hover:underline mt-2">

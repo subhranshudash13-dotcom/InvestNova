@@ -1,0 +1,53 @@
+
+> invest-nova@0.1.0 lint
+> eslint
+
+
+C:\Users\Hp\.gemini\antigravity\scratch\invest-nova\app\api\forex\recommendations\route.ts
+  4:10  warning  'ForexPair' is defined but never used  @typescript-eslint/no-unused-vars
+  9:28  warning  'request' is defined but never used    @typescript-eslint/no-unused-vars
+
+C:\Users\Hp\.gemini\antigravity\scratch\invest-nova\app\api\recommendations\generate\route.ts
+    9:28  warning  'request' is defined but never used  @typescript-eslint/no-unused-vars
+  206:27  warning  'request' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Hp\.gemini\antigravity\scratch\invest-nova\app\dashboard\profile\page.tsx
+  7:13  warning  'user' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Hp\.gemini\antigravity\scratch\invest-nova\components\charts\CandlestickChart.tsx
+  25:52  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Hp\.gemini\antigravity\scratch\invest-nova\components\dashboard\DashboardOverview.tsx
+  24:11  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\Hp\.gemini\antigravity\scratch\invest-nova\components\features\NewsTicker.tsx
+  4:10  warning  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+  4:21  warning  'useState' is defined but never used   @typescript-eslint/no-unused-vars
+
+C:\Users\Hp\.gemini\antigravity\scratch\invest-nova\components\layout\Sidebar.tsx
+   8:5  warning  'LineChart' is defined but never used  @typescript-eslint/no-unused-vars
+  12:5  warning  'Settings' is defined but never used   @typescript-eslint/no-unused-vars
+
+C:\Users\Hp\.gemini\antigravity\scratch\invest-nova\lib\analysis\personalizer.ts
+    6:10  warning  'StockRiskResult' is defined but never used                                                            @typescript-eslint/no-unused-vars
+    6:27  warning  'ForexRiskResult' is defined but never used                                                            @typescript-eslint/no-unused-vars
+   88:1   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+   90:13  error    Unexpected any. Specify a different type                                                               @typescript-eslint/no-explicit-any
+  109:1   warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+  111:17  error    Unexpected any. Specify a different type                                                               @typescript-eslint/no-explicit-any
+
+C:\Users\Hp\.gemini\antigravity\scratch\invest-nova\lib\finnhub\client.ts
+  67:59  warning  'limit' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Hp\.gemini\antigravity\scratch\invest-nova\lib\mongodb\connection.ts
+  14:5  warning  Unused eslint-disable directive (no problems were reported from 'no-var')
+
+C:\Users\Hp\.gemini\antigravity\scratch\invest-nova\lib\mongodb\models.ts
+  1:8  warning  'mongoose' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Hp\.gemini\antigravity\scratch\invest-nova\lib\supabase\middleware.ts
+  18:58  warning  'options' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 21 problems (4 errors, 17 warnings)
+  0 errors and 3 warnings potentially fixable with the `--fix` option.
+

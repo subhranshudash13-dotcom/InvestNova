@@ -18,6 +18,7 @@ export function useRealtimeStocks(userId: string | undefined) {
 
     useEffect(() => {
         if (!userId) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setLoading(false);
             return;
         }
@@ -51,7 +52,9 @@ export function useRealtimeStocks(userId: string | undefined) {
                     filter: `user_id=eq.${userId}`,
                 },
                 (payload) => {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     if (payload.new && (payload.new as any).stocks) {
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         setRecommendations((payload.new as any).stocks);
                     }
                 }

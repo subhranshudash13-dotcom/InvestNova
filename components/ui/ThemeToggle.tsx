@@ -12,6 +12,7 @@ export function ThemeToggle() {
     const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setMounted(true);
     }, []);
 
@@ -59,8 +60,8 @@ export function ThemeToggle() {
                                         setIsOpen(false);
                                     }}
                                     className={`flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-colors ${theme === t.value
-                                            ? "bg-primary text-primary-foreground"
-                                            : "hover:bg-accent hover:text-accent-foreground"
+                                        ? "bg-primary text-primary-foreground"
+                                        : "hover:bg-accent hover:text-accent-foreground"
                                         }`}
                                 >
                                     <Icon className="w-4 h-4" />

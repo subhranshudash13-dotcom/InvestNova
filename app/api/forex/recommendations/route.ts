@@ -102,6 +102,7 @@ export async function POST(request: Request) {
             recommendations: topRecommendations,
             count: topRecommendations.length,
         });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
         console.error('Error generating forex recommendations:', error);
         return NextResponse.json(

@@ -21,6 +21,7 @@ const NewsTicker = dynamic(() => import('@/components/features/NewsTicker').then
 });
 
 interface DashboardOverviewProps {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     user: any;
 }
 

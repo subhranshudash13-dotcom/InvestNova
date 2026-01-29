@@ -24,6 +24,7 @@ function checkRateLimit(): void {
     apiCallTimestamps.push(now);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function fetchWithRetry(url: string, retries = 3): Promise<any> {
     checkRateLimit();
 

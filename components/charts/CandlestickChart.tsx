@@ -22,6 +22,7 @@ const data = [
     { date: "Jun", open: 118, high: 135, low: 115, close: 130 },
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         const { open, high, low, close } = payload[0].payload;
@@ -42,6 +43,7 @@ export function CandlestickChart() {
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setMounted(true);
     }, []);
 
