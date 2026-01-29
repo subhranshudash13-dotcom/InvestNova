@@ -95,6 +95,8 @@
     --border: 200 30% 20%;
     --input: 200 30% 20%;
     --ring: 190 90% 50%;
+    --radius: 0.5rem;
+    /* Ensure radius is defined in ocean theme too if needed */
   }
 }
 
