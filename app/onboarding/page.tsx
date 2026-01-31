@@ -15,9 +15,9 @@ const steps = [
         title: 'Define Your Risk Profile',
         description: 'How do you characterize your investment approach?',
         options: [
-            { value: 'conservative', label: 'Conservative', icon: Shield, desc: 'Prioritize capital preservation over high returns.' },
-            { value: 'balanced', label: 'Balanced', icon: Target, desc: 'A mix of safety and growth potential.' },
-            { value: 'aggressive', label: 'Aggressive', icon: Rocket, desc: 'Seeking high returns with significant risk tolerance.' },
+            { value: 'low', label: 'Conservative', icon: Shield, desc: 'Prioritize capital preservation over high returns.' },
+            { value: 'medium', label: 'Balanced', icon: Target, desc: 'A mix of safety and growth potential.' },
+            { value: 'high', label: 'Aggressive', icon: Rocket, desc: 'Seeking high returns with significant risk tolerance.' },
         ]
     },
     {
@@ -68,8 +68,9 @@ export default function OnboardingPage() {
 
                 toast.success('Onboarding complete!');
                 router.push('/dashboard');
-            } catch (error: any) {
-                toast.error(error.message || 'Failed to save profile');
+            } catch (error) {
+                const message = error instanceof Error ? error.message : 'Failed to save profile';
+                toast.error(message);
             } finally {
                 setLoading(false);
             }

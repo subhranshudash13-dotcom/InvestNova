@@ -85,14 +85,12 @@ function calculateMatchScore(
 /**
  * Personalize and rank stock recommendations
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function personalizeStockRecommendations(
-    stocks: any[],
+    stocks: Array<{ riskScore: number }>,
     userProfile: UserProfile
 ): StockRecommendation[] {
     const recommendations = stocks.map((stock) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const matchScore = calculateMatchScore((stock as any).riskScore, 'stock', userProfile);
+        const matchScore = calculateMatchScore(stock.riskScore, 'stock', userProfile);
 
         return {
             ...stock,
@@ -107,14 +105,12 @@ export function personalizeStockRecommendations(
 /**
  * Personalize and rank forex recommendations
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function personalizeForexRecommendations(
-    forexPairs: any[],
+    forexPairs: Array<{ riskScore: number }>,
     userProfile: UserProfile
 ): ForexRecommendation[] {
     const recommendations = forexPairs.map((pair) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const matchScore = calculateMatchScore((pair as any).riskScore, 'forex', userProfile);
+        const matchScore = calculateMatchScore(pair.riskScore, 'forex', userProfile);
 
         return {
             ...pair,

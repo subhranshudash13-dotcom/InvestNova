@@ -14,7 +14,12 @@ if (!FINNHUB_API_KEY && typeof window === 'undefined') {
 // Rate limiter: Track API calls to stay within 60/min limit
 let apiCallTimestamps: number[] = [];
 
-function checkRateLimit(): void {
+/**
+ * Helper to delay execution
+ */
+export const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+async function checkRateLimit(): Promise<void> {
     const now = Date.now();
     const oneMinuteAgo = now - 60000;
 
@@ -22,7 +27,13 @@ function checkRateLimit(): void {
     apiCallTimestamps = apiCallTimestamps.filter(timestamp => timestamp > oneMinuteAgo);
 
     if (apiCallTimestamps.length >= 60) {
-        throw new Error('Finnhub API rate limit reached (60 calls/minute). Please try again in a moment.');
+        // Instead of throwing, wait until the oldest call is out of the 1-minute window
+        const waitTime = apiCallTimestamps[0] + 60000 - now + 100; // +100ms buffer
+        if (waitTime > 0 && waitTime < 10000) { // Only wait if it's less than 10 seconds
+            await delay(waitTime);
+            return await checkRateLimit();
+        }
+        throw new Error('Finnhub API rate limit reached. Please try again in a minute.');
     }
 
     apiCallTimestamps.push(now);
@@ -30,7 +41,7 @@ function checkRateLimit(): void {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function fetchWithRetry(url: string, retries = 3): Promise<any> {
-    checkRateLimit();
+    await checkRateLimit();
 
     for (let i = 0; i < retries; i++) {
         try {
@@ -72,7 +83,7 @@ export async function getStockProfile(symbol: string) {
     return fetchWithRetry(url);
 }
 
-export async function getMarketNews(category = 'general', limit = 10) {
+export async function getMarketNews(category = 'general', _limit = 10) {
     const url = `${FINNHUB_BASE_URL}/news?category=${category}&minId=0`;
     return fetchWithRetry(url);
 }
@@ -204,30 +215,38 @@ export async function calculateForexTechnicals(pair: string) {
 
 // ============ Helper Functions for Technical Analysis ============
 
+/**
+ * Calculate RSI using Wilder's Smoothing Method
+ */
 function calculateRSI(prices: number[], period: number = 14): number {
-    if (prices.length < period + 1) return 50; // Default neutral
+    if (prices.length < period + 1) return 50;
 
-    let gains = 0;
-    let losses = 0;
+    let avgGain = 0;
+    let avgLoss = 0;
 
-    for (let i = prices.length - period; i < prices.length; i++) {
+    // Initial average (Simple Moving Average)
+    for (let i = 1; i <= period; i++) {
         const change = prices[i] - prices[i - 1];
-        if (change > 0) {
-            gains += change;
-        } else {
-            losses += Math.abs(change);
-        }
+        if (change > 0) avgGain += change;
+        else avgLoss += Math.abs(change);
     }
 
-    const avgGain = gains / period;
-    const avgLoss = losses / period;
+    avgGain /= period;
+    avgLoss /= period;
+
+    // Subsequent values (Wilder's Smoothing)
+    for (let i = period + 1; i < prices.length; i++) {
+        const change = prices[i] - prices[i - 1];
+        const gain = change > 0 ? change : 0;
+        const loss = change < 0 ? Math.abs(change) : 0;
+
+        avgGain = (avgGain * (period - 1) + gain) / period;
+        avgLoss = (avgLoss * (period - 1) + loss) / period;
+    }
 
     if (avgLoss === 0) return 100;
-
     const rs = avgGain / avgLoss;
-    const rsi = 100 - (100 / (1 + rs));
-
-    return rsi;
+    return 100 - 100 / (1 + rs);
 }
 
 function calculateVolatility(prices: number[]): number {

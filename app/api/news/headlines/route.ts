@@ -9,7 +9,7 @@ export async function GET() {
             return NextResponse.json({ success: false, headlines: [] });
         }
 
-        const headlines = news.map((item: any) => ({
+        const headlines = news.map((item: { id: string; headline: string; related: string; url: string; datetime: number }) => ({
             id: item.id,
             headline: item.headline,
             symbol: item.related || 'MARKET',

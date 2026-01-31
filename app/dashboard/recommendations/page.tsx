@@ -122,7 +122,7 @@ export default function RecommendationsPage() {
                     <AlertTriangle className="w-6 h-6 text-orange-500 shrink-0" />
                     <div className="text-sm text-muted-foreground">
                         <p className="font-bold text-orange-500 mb-1 uppercase tracking-wider text-[10px]">Prediction Disclaimer</p>
-                        InvestNova's AI recommendations are based on historical patterns and probabilistic modeling. Trading involves significant risk. Past performance is not indicative of future results. Never invest more than you can afford to lose.
+                        InvestNova&apos;s AI recommendations are based on historical patterns and probabilistic modeling. Trading involves significant risk. Past performance is not indicative of future results. Never invest more than you can afford to lose.
                     </div>
                 </div>
             </div>
@@ -187,7 +187,7 @@ function RecommendationCard({ rec }: { rec: Recommendation }) {
 
             <div className="px-6 py-4 bg-muted/30 border-t border-border/50 group-hover:bg-primary/5 transition-colors">
                 <p className="text-xs text-muted-foreground leading-relaxed italic">
-                    "{rec.analysis_snippet}"
+                    &quot;{rec.analysis_snippet}&quot;
                 </p>
             </div>
         </Card>
