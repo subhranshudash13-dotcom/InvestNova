@@ -1,11 +1,10 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import connectDB from '@/lib/mongodb/connection';
-import { Stock, UserRecommendation } from '@/lib/mongodb/models';
+import { UserRecommendation } from '@/lib/mongodb/models';
 import { FinnhubClient } from '@/lib/finnhub/client';
-import { calculateStockRisk, calculateDrawdown, estimateProjectedReturn } from '@/lib/analysis/riskCalculator';
 import { personalizeStockRecommendations } from '@/lib/analysis/personalizer';
-import { computeConfidenceScore, simulateBacktestPerformance } from '@/lib/analysis/accuracy';
+import { processStock, batchProcess } from '@/lib/analysis/engine';
 
 export async function POST(request: Request) {
     try {
@@ -38,138 +37,14 @@ export async function POST(request: Request) {
 
         // 4. Get trending stocks
         const trendingStocks = await FinnhubClient.getTrendingStocks();
-        const topStocks = trendingStocks.slice(0, 50); // Analyze top 50
+        const topStocks = trendingStocks.slice(0, 30); // Analyze top 30 for better performance
 
-        const stockRecommendations = [];
-
-        // 5. Analyze each stock
-        for (const symbol of topStocks) {
-            try {
-                // Check MongoDB cache first
-                let cachedStock = await Stock.findOne({ symbol });
-
-                if (!cachedStock || (Date.now() - new Date(cachedStock.updatedAt).getTime()) > 300000) {
-                    // Cache expired or not found, fetch fresh data
-                    const [quote, profile, technicals, sentiment] = await Promise.all([
-                        FinnhubClient.getQuote(symbol),
-                        FinnhubClient.getStockProfile(symbol),
-                        FinnhubClient.getTechnicalIndicators(symbol),
-                        FinnhubClient.getNewsSentiment(symbol),
-                    ]);
-
-                    if (!quote || !profile || !technicals || quote.c === 0) {
-                        continue; // Skip if data unavailable
-                    }
-
-                    const candles = await FinnhubClient.getStockCandles(symbol, 'D', 30);
-                    const drawdown = candles && candles.c ? calculateDrawdown(candles.c) : -5;
-
-                    // Calculate risk score
-                    const riskResult = calculateStockRisk({
-                        volatility: technicals.volatility || 25,
-                        beta: technicals.beta || 1.0,
-                        rsi: technicals.rsi || 50,
-                        drawdown,
-                        sentiment: sentiment?.sentiment || 0,
-                    });
-
-                    // Calculate projected return
-                    const projectedReturn = estimateProjectedReturn(
-                        quote.c,
-                        technicals.volatility || 25,
-                        technicals.rsi || 50,
-                        userProfile.investmentHorizon || 'medium'
-                    );
-
-                    // Update MongoDB cache
-                    cachedStock = await Stock.findOneAndUpdate(
-                        { symbol },
-                        {
-                            symbol,
-                            name: profile.name || symbol,
-                            price: quote.c,
-                            volume: quote.v || 0,
-                            change24h: quote.dp || 0,
-                            technicals: {
-                                rsi: technicals.rsi || 50,
-                                volatility: technicals.volatility || 25,
-                                beta: technicals.beta || 1.0,
-                            },
-                            sentiment: sentiment?.sentiment || 0,
-                        },
-                        { upsert: true, new: true }
-                    );
-
-                    // ... (in the loop where rec is created)
-                    const perf = simulateBacktestPerformance(symbol, 'mean-reversion');
-                    const confidenceScore = computeConfidenceScore({
-                        rsi: technicals.rsi || 50,
-                        volatility: technicals.volatility || 25,
-                        sentiment: sentiment?.sentiment || 0,
-                        historicalWinRate: perf.successRate,
-                        sampleSize: perf.sampleSize
-                    });
-
-                    stockRecommendations.push({
-                        symbol,
-                        name: profile.name || symbol,
-                        price: quote.c,
-                        change24h: quote.dp || 0,
-                        riskScore: riskResult.score,
-                        riskLevel: riskResult.level,
-                        projectedReturn,
-                        timeframe: userProfile.investmentHorizon === 'short' ? '1W' : userProfile.investmentHorizon === 'medium' ? '1M' : '3M',
-                        reason: riskResult.recommendation,
-                        matchScore: 0,
-                        confidenceScore,
-                        historicalAccuracy: `${(perf.successRate * 100).toFixed(1)}% success rate in backtests`,
-                    });
-                } else {
-                    // Use cached data
-                    const perf = simulateBacktestPerformance(cachedStock.symbol, 'mean-reversion');
-                    const riskResult = calculateStockRisk({
-                        volatility: cachedStock.technicals.volatility,
-                        beta: cachedStock.technicals.beta,
-                        rsi: cachedStock.technicals.rsi,
-                        drawdown: -5,
-                        sentiment: cachedStock.sentiment,
-                    });
-
-                    const projectedReturn = estimateProjectedReturn(
-                        cachedStock.price,
-                        cachedStock.technicals.volatility,
-                        cachedStock.technicals.rsi,
-                        userProfile.investmentHorizon || 'medium'
-                    );
-
-                    const confidenceScore = computeConfidenceScore({
-                        rsi: cachedStock.technicals.rsi,
-                        volatility: cachedStock.technicals.volatility,
-                        sentiment: cachedStock.sentiment,
-                        historicalWinRate: perf.successRate,
-                        sampleSize: perf.sampleSize
-                    });
-
-                    stockRecommendations.push({
-                        symbol: cachedStock.symbol,
-                        name: cachedStock.name,
-                        price: cachedStock.price,
-                        change24h: cachedStock.change24h,
-                        riskScore: riskResult.score,
-                        riskLevel: riskResult.level,
-                        projectedReturn,
-                        timeframe: userProfile.investmentHorizon === 'short' ? '1W' : userProfile.investmentHorizon === 'medium' ? '1M' : '3M',
-                        reason: riskResult.recommendation,
-                        matchScore: 0,
-                        confidenceScore,
-                        historicalAccuracy: `${(perf.successRate * 100).toFixed(1)}% success rate in backtests`,
-                    });
-                }
-            } catch (error) {
-                console.error(`Error analyzing ${symbol}:`, error);
-                continue;
-            }
-        }
+        // 5. Analyze stocks in batches
+        const stockRecommendations = await batchProcess(
+            topStocks,
+            (symbol) => processStock(symbol, userProfile),
+            5 // Batch size of 5
+        );
 
         // 6. Personalize recommendations
         const personalizedRecommendations = personalizeStockRecommendations(
